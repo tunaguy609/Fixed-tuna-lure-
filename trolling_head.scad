@@ -303,7 +303,7 @@ module eye_pocket(side = 1)
         0,
         eyeLocation
     ])
-        rotate([0, 90, 0])
+        rotate([0, -90 * side, 0])
         cylinder(
             d = eyeDiameter,
             h = eyeDepth
