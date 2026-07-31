@@ -106,24 +106,6 @@ showLeaderHole = true;
 
 showSkirtPocket = true;
 
-showKeel = true;
-
-
-//==============================
-// KEEL
-//==============================
-
-// Integral printed keel on the ventral (–Y) side.
-// Rounded-triangle fin: full profile at the rear shoulder,
-// tapering to nothing at the nose tip.
-
-keelDepth = 4;       // mm the fin projects below the body surface
-
-keelBaseWidth = 8;   // mm root width where the fin meets the body
-
-keelTipRadius = 1.5; // mm rounding at the fin tip
-
-keelBlendRadius = 2; // mm rounding at the root corners
 
 ///////////////////////////////////////////////////////////////
 //
@@ -267,8 +249,6 @@ module rear_assembly()
             );
         }
 
-        if (showKeel)
-            keel_fin();
     }
 }
 
@@ -353,39 +333,6 @@ module skirt_pocket()
             h = skirtPocketDepth + 0.1,
             d = skirtPocketDiameter
         );
-}
-
-//-------------------------------------------------------------
-// Keel fin
-// Integral rounded-triangle keel on the ventral (–Y) side.
-// Tapers from full depth at the rear shoulder to near-zero at
-// the nose tip so the profile blends naturally with the body.
-//-------------------------------------------------------------
-module keel_fin()
-{
-    // Extrude from rear (z=headLength) toward nose (z=0).
-    // rotate([0,180,0]) flips local +Z to global –Z so the
-    // extrusion travels nose-ward.  The scale=[0.05,0.05]
-    // shrinks the profile to 5 % at the nose end.
-    translate([0, -(bodyDiameter / 2), headLength])
-        rotate([0, 180, 0])
-        linear_extrude(
-            height    = headLength,
-            scale     = [0.05, 0.05],
-            convexity = 4
-        )
-        hull()
-        {
-            // Left root corner
-            translate([-keelBaseWidth / 2, 0])
-                circle(r = keelBlendRadius);
-            // Right root corner
-            translate([ keelBaseWidth / 2, 0])
-                circle(r = keelBlendRadius);
-            // Rounded tip, pointing down
-            translate([0, -keelDepth])
-                circle(r = keelTipRadius);
-        }
 }
 
 ///////////////////////////////////////////////////////////////
