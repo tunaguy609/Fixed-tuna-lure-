@@ -111,12 +111,12 @@ showSkirtPocket = true;
 // WEDGE
 //==============================
 
-// Rounds the ventral (bottom) half of the body into a wedge shape instead
-// of a full cylinder.  The top half stays round; the bottom tapers to a
-// rounded ridge that runs nose-to-rear.
+// Rounded-triangle wedge that projects downward from the ventral (–Y) side
+// of the body.  Full depth and width at the rear shoulder, tapering toward
+// the nose to match the body profile.
 
-wedgeDepth    = bodyDiameter / 4; // mm the wedge projects below the equator
-wedgeTipRadius = 2.0;             // mm rounding at the bottom ridge
+wedgeDepth    = 8;    // mm the wedge projects below the body surface
+wedgeTipRadius = 2.0; // mm rounding at the bottom ridge and root corners
 
 
 ///////////////////////////////////////////////////////////////
@@ -161,33 +161,43 @@ profile = [
 
 module head_body()
 {
-    intersection()
-    {
-        // Full rotationally-symmetric bullet profile
-        rotate_extrude(convexity = 20)
-        polygon(
-            concat(
-                [[0, 0]],
-                profile,
-                [[0, headLength]]
-            )
-        );
+    rotate_extrude(convexity = 20)
+    polygon(
+        concat(
+            [[0, 0]],
+            profile,
+            [[0, headLength]]
+        )
+    );
+}
 
-        // Wedge mask: preserves the dorsal (+Y) half unchanged and
-        // tapers the ventral (–Y) half to a rounded ridge.
-        // The 2D hull is extruded the full head length.
-        linear_extrude(height = headLength + 1, convexity = 4)
+//-------------------------------------------------------------
+// Ventral wedge
+// Rounded-triangle wedge that projects downward from the body underside.
+// Extrudes from rear (z=headLength) toward nose (z=0), scaling down to
+// match the narrowing body at the nose tip.
+//-------------------------------------------------------------
+module ventral_wedge()
+{
+    translate([0, -(bodyDiameter / 2), headLength])
+        rotate([0, 180, 0])
+        linear_extrude(
+            height    = headLength,
+            scale     = [noseDiameter / bodyDiameter, noseDiameter / bodyDiameter],
+            convexity = 4
+        )
         hull()
         {
-            // Large rectangle above the equator – keeps the entire top half.
-            translate([0, bodyDiameter * 0.75])
-                square([bodyDiameter * 3, bodyDiameter * 1.5], center = true);
-
-            // Rounded tip at the bottom of the wedge.
+            // Left root corner
+            translate([-bodyDiameter / 2, 0])
+                circle(r = wedgeTipRadius);
+            // Right root corner
+            translate([ bodyDiameter / 2, 0])
+                circle(r = wedgeTipRadius);
+            // Rounded tip, pointing down
             translate([0, -wedgeDepth])
                 circle(r = wedgeTipRadius);
         }
-    }
 }
 
 ///////////////////////////////////////////////////////////////
@@ -262,6 +272,8 @@ module rear_assembly()
         shoulder_blend();
 
         skirt_spigot();
+
+        ventral_wedge();
 
         if (showCollars)
         {
