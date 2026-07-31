@@ -64,9 +64,9 @@ grooveWidth = 1.5;
 
 grooveDepth = 1;
 
-groove1 = 30;
+groove1 = 56;
 
-groove2 = 36;
+groove2 = 62;
 
 
 //==============================
