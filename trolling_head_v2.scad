@@ -4,10 +4,10 @@
 //
 // Production Offshore Trolling Head
 //
-// Version 4.2
-// - Fixed eye_pocket rotation so both eye sockets cut inward
-// - Replaced minkowski() collar with rotate_extrude for fast preview
-// - Lowered preview $fn from 90 to 32 for responsive interactive use
+// Version 4.3
+// - Grooves changed to forward-cupped asymmetric profile (steep front wall,
+//   flat bottom, ramped rear wall) for increased water-grabbing action
+// - grooveWidth 1.5→2.5, grooveDepth 1→1.5
 //
 ///////////////////////////////////////////////////////////////
 
@@ -60,9 +60,9 @@ collarOffset = 6;
 // GROOVES
 //==============================
 
-grooveWidth = 1.5;
+grooveWidth = 2.5;
 
-grooveDepth = 1;
+grooveDepth = 1.5;
 
 groove1 = 56;
 
@@ -264,16 +264,17 @@ module rear_assembly()
 //-------------------------------------------------------------
 module groove(zPos)
 {
-    translate([0, 0, zPos - grooveWidth / 2])
+    // Asymmetric cupped profile: steep forward wall to grab water,
+    // flat bottom, gently ramped rear wall.
+    // In 2D rotate_extrude space: X = radius, Y = axial (0 = nose side).
+    translate([0, 0, zPos])
         rotate_extrude(convexity = 10)
-        translate([
-            bodyDiameter / 2 - grooveDepth,
-            0
-        ])
-        square(
-            [grooveDepth, grooveWidth],
-            center = false
-        );
+        polygon([
+            [bodyDiameter / 2,               0                    ],  // surface, forward edge
+            [bodyDiameter / 2 - grooveDepth, grooveWidth * 0.2   ],  // bottom, near front
+            [bodyDiameter / 2 - grooveDepth, grooveWidth * 0.75  ],  // bottom, near rear
+            [bodyDiameter / 2,               grooveWidth          ]   // surface, rear edge
+        ]);
 }
 
 //-------------------------------------------------------------
