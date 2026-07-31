@@ -115,7 +115,7 @@ showSkirtPocket = true;
 // of a full cylinder.  The top half stays round; the bottom tapers to a
 // rounded ridge that runs nose-to-rear.
 
-wedgeDepth    = bodyDiameter / 2; // mm the wedge projects below the equator
+wedgeDepth    = bodyDiameter / 4; // mm the wedge projects below the equator
 wedgeTipRadius = 2.0;             // mm rounding at the bottom ridge
 
 
