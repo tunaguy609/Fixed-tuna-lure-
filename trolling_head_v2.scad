@@ -4,10 +4,9 @@
 //
 // Production Offshore Trolling Head
 //
-// Version 4.3
-// - Grooves changed to forward-cupped asymmetric profile (steep front wall,
-//   flat bottom, ramped rear wall) for increased water-grabbing action
-// - grooveWidth 1.5→2.5, grooveDepth 1→1.5
+// Version 4.4
+// - Added keel weight pocket on ventral (–Y) side at z=40
+//   for press-fit 6 mm tungsten/lead rod; biases lure upright
 //
 ///////////////////////////////////////////////////////////////
 
@@ -94,6 +93,13 @@ skirtPocketDiameter = 16;
 
 skirtPocketDepth = 20;
 
+// Keel weight pocket — belly (–Y) side, accepts a 6 mm tungsten/lead rod
+keelPocketDiameter = 6;
+
+keelPocketDepth = 8;
+
+keelPocketLocation = 40;
+
 
 //==============================
 // OPTIONS
@@ -108,6 +114,8 @@ showCollars = true;
 showLeaderHole = true;
 
 showSkirtPocket = true;
+
+showKeelPocket = true;
 
 ///////////////////////////////////////////////////////////////
 //
@@ -336,6 +344,21 @@ module skirt_pocket()
         );
 }
 
+//-------------------------------------------------------------
+// Keel weight pocket
+// Blind hole on the ventral (–Y) side of the mid-body.
+// Press-fit a 6 mm tungsten or lead rod to bias the lure upright.
+//-------------------------------------------------------------
+module keel_pocket()
+{
+    translate([0, -(bodyDiameter / 2 + 0.01), keelPocketLocation])
+        rotate([-90, 0, 0])
+        cylinder(
+            h = keelPocketDepth,
+            d = keelPocketDiameter
+        );
+}
+
 ///////////////////////////////////////////////////////////////
 //
 // FINAL MODEL
@@ -375,4 +398,7 @@ difference()
 
     if (showSkirtPocket)
         skirt_pocket();
+
+    if (showKeelPocket)
+        keel_pocket();
 }
