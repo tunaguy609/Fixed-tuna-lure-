@@ -107,18 +107,6 @@ showLeaderHole = true;
 showSkirtPocket = true;
 
 
-//==============================
-// WEDGE
-//==============================
-
-// Rounded-triangle wedge that projects downward from the ventral (–Y) side
-// of the body.  Full depth and width at the rear shoulder, tapering toward
-// the nose to match the body profile.
-
-wedgeDepth    = 8;    // mm the wedge projects below the body surface
-wedgeTipRadius = 2.0; // mm rounding at the bottom ridge and root corners
-
-
 ///////////////////////////////////////////////////////////////
 //
 // BODY PROFILE
@@ -169,35 +157,6 @@ module head_body()
             [[0, headLength]]
         )
     );
-}
-
-//-------------------------------------------------------------
-// Ventral wedge
-// Rounded-triangle wedge that projects downward from the body underside.
-// Extrudes from rear (z=headLength) toward nose (z=0), scaling down to
-// match the narrowing body at the nose tip.
-//-------------------------------------------------------------
-module ventral_wedge()
-{
-    translate([0, -(bodyDiameter / 2), headLength])
-        rotate([0, 180, 0])
-        linear_extrude(
-            height    = headLength,
-            scale     = [noseDiameter / bodyDiameter, noseDiameter / bodyDiameter],
-            convexity = 4
-        )
-        hull()
-        {
-            // Left root corner
-            translate([-bodyDiameter / 2, 0])
-                circle(r = wedgeTipRadius);
-            // Right root corner
-            translate([ bodyDiameter / 2, 0])
-                circle(r = wedgeTipRadius);
-            // Rounded tip, pointing down
-            translate([0, -wedgeDepth])
-                circle(r = wedgeTipRadius);
-        }
 }
 
 ///////////////////////////////////////////////////////////////
@@ -272,8 +231,6 @@ module rear_assembly()
         shoulder_blend();
 
         skirt_spigot();
-
-        ventral_wedge();
 
         if (showCollars)
         {
