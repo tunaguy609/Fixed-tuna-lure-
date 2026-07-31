@@ -172,7 +172,7 @@ module head_body()
 //-------------------------------------------------------------
 module skirt_spigot()
 {
-    translate([0, 0, -spigotLength])
+    translate([0, 0, headLength])
         cylinder(
             h = spigotLength,
             d = spigotDiameter
@@ -188,7 +188,7 @@ module shoulder_blend()
 {
     if (shoulderRadius > 0)
     {
-        translate([0, 0, -shoulderRadius])
+        translate([0, 0, headLength])
             cylinder(
                 h = shoulderRadius,
                 d1 = bodyDiameter,
@@ -238,13 +238,13 @@ module rear_assembly()
         {
             // Collar #1
             retaining_collar(
-                -spigotLength
+                headLength
                 + collarOffset
             );
 
             // Collar #2
             retaining_collar(
-                -spigotLength
+                headLength
                 + collarOffset
                 + collarWidth
                 + collarSpacing
@@ -316,7 +316,7 @@ module eye_pocket(side = 1)
 //-------------------------------------------------------------
 module leader_bore()
 {
-    translate([0, 0, -spigotLength - 1])
+    translate([0, 0, -1])
         cylinder(
             h = headLength + spigotLength + 2,
             d = leaderHole
@@ -328,7 +328,7 @@ module leader_bore()
 //-------------------------------------------------------------
 module skirt_pocket()
 {
-    translate([0, 0, -skirtPocketDepth])
+    translate([0, 0, headLength + spigotLength - skirtPocketDepth])
         cylinder(
             h = skirtPocketDepth + 0.1,
             d = skirtPocketDiameter
