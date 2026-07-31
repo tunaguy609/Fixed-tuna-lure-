@@ -4,9 +4,10 @@
 //
 // Production Offshore Trolling Head
 //
-// Version 4.4
-// - Added keel weight pocket on ventral (–Y) side at z=40
-//   for press-fit 6 mm tungsten/lead rod; biases lure upright
+// Version 4.5
+// - Removed insert-hole keel pocket; replaced with integral printed keel fin
+// - Rounded-triangle ventral fin tapers from full depth (4 mm) at rear
+//   shoulder to near-zero at nose tip for true-running stability
 //
 ///////////////////////////////////////////////////////////////
 
@@ -93,13 +94,6 @@ skirtPocketDiameter = 16;
 
 skirtPocketDepth = 20;
 
-// Keel weight pocket — belly (–Y) side, accepts a 6 mm tungsten/lead rod
-keelPocketDiameter = 6;
-
-keelPocketDepth = 8;
-
-keelPocketLocation = 40;
-
 
 //==============================
 // OPTIONS
@@ -115,7 +109,24 @@ showLeaderHole = true;
 
 showSkirtPocket = true;
 
-showKeelPocket = true;
+showKeel = true;
+
+
+//==============================
+// KEEL
+//==============================
+
+// Integral printed keel on the ventral (–Y) side.
+// Rounded-triangle fin: full profile at the rear shoulder,
+// tapering to nothing at the nose tip.
+
+keelDepth = 4;       // mm the fin projects below the body surface
+
+keelBaseWidth = 8;   // mm root width where the fin meets the body
+
+keelTipRadius = 1.5; // mm rounding at the fin tip
+
+keelBlendRadius = 2; // mm rounding at the root corners
 
 ///////////////////////////////////////////////////////////////
 //
@@ -258,6 +269,9 @@ module rear_assembly()
                 + collarSpacing
             );
         }
+
+        if (showKeel)
+            keel_fin();
     }
 }
 
@@ -345,18 +359,36 @@ module skirt_pocket()
 }
 
 //-------------------------------------------------------------
-// Keel weight pocket
-// Blind hole on the ventral (–Y) side of the mid-body.
-// Press-fit a 6 mm tungsten or lead rod to bias the lure upright.
+// Keel fin
+// Integral rounded-triangle keel on the ventral (–Y) side.
+// Tapers from full depth at the rear shoulder to near-zero at
+// the nose tip so the profile blends naturally with the body.
 //-------------------------------------------------------------
-module keel_pocket()
+module keel_fin()
 {
-    translate([0, -(bodyDiameter / 2 + 0.01), keelPocketLocation])
-        rotate([-90, 0, 0])
-        cylinder(
-            h = keelPocketDepth,
-            d = keelPocketDiameter
-        );
+    // Extrude from rear (z=headLength) toward nose (z=0).
+    // rotate([0,180,0]) flips local +Z to global –Z so the
+    // extrusion travels nose-ward.  The scale=[0.05,0.05]
+    // shrinks the profile to 5 % at the nose end.
+    translate([0, -(bodyDiameter / 2), headLength])
+        rotate([0, 180, 0])
+        linear_extrude(
+            height    = headLength,
+            scale     = [0.05, 0.05],
+            convexity = 4
+        )
+        hull()
+        {
+            // Left root corner
+            translate([-keelBaseWidth / 2, 0])
+                circle(r = keelBlendRadius);
+            // Right root corner
+            translate([ keelBaseWidth / 2, 0])
+                circle(r = keelBlendRadius);
+            // Rounded tip, pointing down
+            translate([0, -keelDepth])
+                circle(r = keelTipRadius);
+        }
 }
 
 ///////////////////////////////////////////////////////////////
@@ -398,7 +430,4 @@ difference()
 
     if (showSkirtPocket)
         skirt_pocket();
-
-    if (showKeelPocket)
-        keel_pocket();
 }
