@@ -4,8 +4,10 @@
 //
 // Production Offshore Trolling Head
 //
-// Version 4.1
+// Version 4.2
 // - Fixed eye_pocket rotation so both eye sockets cut inward
+// - Replaced minkowski() collar with rotate_extrude for fast preview
+// - Lowered preview $fn from 90 to 32 for responsive interactive use
 //
 ///////////////////////////////////////////////////////////////
 
@@ -16,7 +18,7 @@
 
 preview = true;
 
-$fn = preview ? 90 : 300;
+$fn = preview ? 32 : 300;
 
 
 //==============================
@@ -197,27 +199,25 @@ module shoulder_blend()
 
 //-------------------------------------------------------------
 // Rounded collar
+// Uses rotate_extrude of a rounded 2D profile for performance.
 //-------------------------------------------------------------
 module retaining_collar(zPos)
 {
     translate([0, 0, zPos])
-        minkowski()
+        rotate_extrude(convexity = 10)
+        hull()
         {
-            difference()
-            {
-                cylinder(
-                    h = collarWidth - (collarHeight / 2),
-                    d = spigotDiameter + (2 * collarHeight)
-                );
+            translate([
+                spigotDiameter / 2 + collarHeight / 2,
+                collarHeight / 2
+            ])
+                circle(r = collarHeight / 2);
 
-                translate([0, 0, -0.1])
-                    cylinder(
-                        h = collarWidth,
-                        d = spigotDiameter
-                    );
-            }
-
-            sphere(r = collarHeight / 2);
+            translate([
+                spigotDiameter / 2 + collarHeight / 2,
+                collarWidth - collarHeight / 2
+            ])
+                circle(r = collarHeight / 2);
         }
 }
 
