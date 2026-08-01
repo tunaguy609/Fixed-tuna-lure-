@@ -35,7 +35,7 @@ noseDiameter = 7;
 
 spigotDiameter = 19;
 
-spigotLength = 26;
+spigotLength = 15;
 
 shoulderRadius = 1;
 
@@ -250,12 +250,6 @@ module rear_assembly()
 
         if (showCollars)
         {
-            // Collar #1
-            retaining_collar(
-                headLength
-                + collarOffset
-            );
-
             // Collar #2
             retaining_collar(
                 headLength
