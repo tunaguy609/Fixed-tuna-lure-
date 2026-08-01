@@ -76,8 +76,6 @@ grooveDepth = 1.5;
 
 groove1 = 46;
 
-groove2 = 52;
-
 
 //==============================
 // EYES
@@ -375,7 +373,6 @@ difference()
     if (showGrooves)
     {
         groove(groove1);
-        groove(groove2);
     }
 
     // Eye pockets
