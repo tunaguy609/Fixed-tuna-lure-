@@ -57,7 +57,7 @@ collarOffset = 6;
 // GROOVES
 //==============================
 
-grooveWidth = 2.5;
+grooveWidth = 4.0;
 
 grooveDepth = 1.5;
 
