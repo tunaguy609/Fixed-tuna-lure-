@@ -59,10 +59,10 @@ collarOffset = 9;
 
 jetTubeDiameter = 2.5;
 
-// Entry bore: just past nose taper where body becomes full diameter
-jetTubeEntryZ = 14;
+// Entry: bottom of nose at its widest point (nose taper tangent join)
+jetTubeEntryZ = 12;
 
-// Exit bore: between the eyes
+// Exit: top of body, angled rearward through the body like a vent slot
 jetTubeExitZ = eyeLocation;
 
 
@@ -316,16 +316,22 @@ module skirt_pocket()
 }
 
 //-------------------------------------------------------------
-// Jet bore
-// Straight through-bore perpendicular to body axis at zPos.
-// Creates a visible entry hole on one side and exit on the other.
+// Vent slot bore
+// Angled bore entering at the bottom of the nose at its widest
+// point (jetTubeEntryZ) and exiting through the top of the body
+// rearward at jetTubeExitZ – like an upward vent slot.
 //-------------------------------------------------------------
-module jet_bore(zPos)
+module vent_slot_bore()
 {
-    translate([0, -(bodyDiameter / 2 + 1), zPos])
-        rotate([-90, 0, 0])
+    dY         = bodyDiameter + 2;                   // cross-body span + overcut
+    dZ         = jetTubeExitZ - jetTubeEntryZ;
+    boreLength = sqrt(dY * dY + dZ * dZ);
+    boreAngle  = atan2(dY, dZ);                      // tilt from +Z toward +Y
+
+    translate([0, -(bodyDiameter / 2 + 1), jetTubeEntryZ])
+        rotate([-boreAngle, 0, 0])
         cylinder(
-            h = bodyDiameter + 2,
+            h = boreLength,
             d = jetTubeDiameter
         );
 }
@@ -364,10 +370,9 @@ difference()
     if (showSkirtPocket)
         skirt_pocket();
 
-    // Jet tubes
+    // Vent slot: angled bore from nose bottom to body top
     if (showJetTubes)
     {
-        jet_bore(jetTubeEntryZ);
-        jet_bore(jetTubeExitZ);
+        vent_slot_bore();
     }
 }
