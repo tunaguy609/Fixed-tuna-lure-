@@ -76,7 +76,7 @@ grooveDepth = 1.5;
 
 grooveEdgeRadius = 0.6;
 
-grooveRearEdgeRadius = 1.0;
+grooveRearEdgeRadius = 1.5;
 
 grooveRearEdgeRaise = 0.5;
 
