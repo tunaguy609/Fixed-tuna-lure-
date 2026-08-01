@@ -348,7 +348,7 @@ module jet_tube(side = 1)
     // to exit  (y=side*bodyDiameter/2, z=jetTubeExitZ).
     deltaY = bodyDiameter / 2 - jetTubeOffset;
     deltaZ = jetTubeExitZ;
-    tubeLength = sqrt(deltaY * deltaY + deltaZ * deltaZ) + 2;
+    tubeLength = sqrt(deltaY * deltaY + deltaZ * deltaZ) + 12;
     angle = atan2(deltaY, deltaZ);
 
     translate([0, side * jetTubeOffset, -0.1])
