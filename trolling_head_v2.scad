@@ -61,8 +61,8 @@ jetTubeDiameter = 1.5;
 
 jetTubeOffset = 2.5;
 
-// Z position where tubes exit the body side wall (just in front of eye pads)
-jetTubeExitZ = eyeLocation - eyeFlatDiameter / 2 - 1;
+// Z position where tubes exit the body side wall (between the eyes)
+jetTubeExitZ = eyeLocation;
 
 
 //==============================
