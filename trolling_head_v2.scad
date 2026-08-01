@@ -74,7 +74,7 @@ eyeDiameter = 10;
 
 eyeDepth = 2.5;
 
-eyeLocation = 23;
+eyeLocation = 28;
 
 eyeFlatDepth = .6;
 
