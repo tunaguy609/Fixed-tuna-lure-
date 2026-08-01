@@ -108,7 +108,7 @@ leaderHoleTrumpetDepth = 4;
 // Narrow end (at body/spigot join) and wide end (at spigot tip)
 skirtPocketDiameterNarrow = 2.5;
 
-skirtPocketDiameterWide = 9;
+skirtPocketDiameterWide = 12;
 
 skirtPocketDepth = spigotLength;
 
