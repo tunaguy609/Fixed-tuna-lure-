@@ -96,9 +96,10 @@ eyeDepth = 2.5;
 eyeLocation = 32;
 
 // Flat cheek milled into each side around the eye pocket
-eyeFlatDiameter = 14;
+eyeFlatDepth = 1.5;
 
-eyeFlatDepth = 0.8;
+// Axial length (Z) of the flat cheek
+eyeFlatLength = 16;
 
 
 //==============================
@@ -343,21 +344,19 @@ module eye_pocket(side = 1)
 
 //-------------------------------------------------------------
 // Eye flat
-// Shallow disc milled into each side of the body around the eye,
-// creating a flat cheek that the eye sits on.
+// Slab cut on each side of the body around the eye area.
+// Subtracts a box whose inner face sits at
+//   bodyDiameter/2 - eyeFlatDepth from centre,
+// leaving a true flat plane on each side.
 //-------------------------------------------------------------
 module eye_flat(side = 1)
 {
     translate([
-        side * (bodyDiameter / 2 + 0.01),
+        side * (bodyDiameter / 2 - eyeFlatDepth + 50),
         0,
         eyeLocation
     ])
-        rotate([0, -90 * side, 0])
-        cylinder(
-            d = eyeFlatDiameter,
-            h = eyeFlatDepth
-        );
+        cube([100, bodyDiameter + 10, eyeFlatLength], center = true);
 }
 
 //-------------------------------------------------------------
