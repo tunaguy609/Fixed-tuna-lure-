@@ -320,20 +320,20 @@ module skirt_pocket()
 // Angled bore entering at the bottom of the nose at its widest
 // point (jetTubeEntryZ) and exiting through the top of the body
 // rearward at jetTubeExitZ – like an upward vent slot.
+// Hull of two spheres lets OpenSCAD compute the angle implicitly.
 //-------------------------------------------------------------
 module vent_slot_bore()
 {
-    dY         = bodyDiameter + 2;                   // cross-body span + overcut
-    dZ         = jetTubeExitZ - jetTubeEntryZ;
-    boreLength = sqrt(dY * dY + dZ * dZ);
-    boreAngle  = atan2(dY, dZ);                      // tilt from +Z toward +Y
+    hull()
+    {
+        // Entry: bottom of nose at its widest point
+        translate([0, -(bodyDiameter / 2 + 1), jetTubeEntryZ])
+            sphere(d = jetTubeDiameter);
 
-    translate([0, -(bodyDiameter / 2 + 1), jetTubeEntryZ])
-        rotate([-boreAngle, 0, 0])
-        cylinder(
-            h = boreLength,
-            d = jetTubeDiameter
-        );
+        // Exit: top of body at eye level
+        translate([0, (bodyDiameter / 2 + 1), jetTubeExitZ])
+            sphere(d = jetTubeDiameter);
+    }
 }
 
 ///////////////////////////////////////////////////////////////
