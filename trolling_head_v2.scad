@@ -57,7 +57,7 @@ collarOffset = 9;
 // JET TUBES
 //==============================
 
-jetTubeDiameter = 1.5;
+jetTubeDiameter = 2.5;
 
 jetTubeOffset = 2.5;
 
