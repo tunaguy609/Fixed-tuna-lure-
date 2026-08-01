@@ -326,12 +326,12 @@ module vent_slot_bore()
 {
     hull()
     {
-        // Entry: bottom of nose at its widest point
-        translate([0, -(bodyDiameter / 2 + 1), jetTubeEntryZ])
+        // Entry: bottom of nose at its widest point – center on body surface
+        translate([0, -(bodyDiameter / 2), jetTubeEntryZ])
             sphere(d = jetTubeDiameter);
 
-        // Exit: top of body at eye level
-        translate([0, (bodyDiameter / 2 + 1), jetTubeExitZ])
+        // Exit: top of body – center on body surface so full bore diameter opens
+        translate([0, (bodyDiameter / 2), jetTubeExitZ])
             sphere(d = jetTubeDiameter);
     }
 }
