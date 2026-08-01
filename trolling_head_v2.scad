@@ -59,16 +59,11 @@ collarOffset = 9;
 
 jetTubeDiameter = 2.5;
 
-// Entry: bottom of nose at its widest point (nose taper tangent join)
-jetTubeEntryZ = 12;
+// Entry: outside bottom wall, 13 mm back from nose
+jetTubeEntryZ = 13;
 
-// Exit: top of body, angled rearward through the body like a vent slot
-jetTubeExitZ = eyeLocation;
-
-// Lateral offset so the vent tunnel clears the central leader bore.
-// Minimum needed: (leaderHole + jetTubeDiameter) / 2 = 2.5 mm.
-// 5 mm gives a comfortable 2.5 mm wall between the two bores.
-ventXOffset = 5;
+// Exit: outside top wall, 38 mm back from nose
+jetTubeExitZ = 38;
 
 
 //==============================
@@ -322,21 +317,20 @@ module skirt_pocket()
 
 //-------------------------------------------------------------
 // Vent slot bore
-// Angled bore entering at the bottom of the nose at its widest
-// point (jetTubeEntryZ) and exiting through the top of the body
-// rearward at jetTubeExitZ – like an upward vent slot.
-// Hull of two spheres lets OpenSCAD compute the angle implicitly.
+// Angled bore entering on the outside bottom wall at jetTubeEntryZ,
+// passing through the body, and exiting on the outside top wall at
+// jetTubeExitZ. Hull of two spheres gives the correct angled capsule.
 //-------------------------------------------------------------
 module vent_slot_bore()
 {
     hull()
     {
-        // Entry: bottom of nose at its widest point – offset in X to clear leader bore
-        translate([ventXOffset, -(bodyDiameter / 2), jetTubeEntryZ])
+        // Entry: outside bottom wall
+        translate([0, -(bodyDiameter / 2), jetTubeEntryZ])
             sphere(d = jetTubeDiameter);
 
-        // Exit: top of body – same X offset keeps the whole tunnel clear of leader bore
-        translate([ventXOffset, (bodyDiameter / 2), jetTubeExitZ])
+        // Exit: outside top wall
+        translate([0, (bodyDiameter / 2), jetTubeExitZ])
             sphere(d = jetTubeDiameter);
     }
 }
