@@ -48,9 +48,9 @@ collarWidth = 2;
 
 collarHeight = 1;
 
-collarSpacing = 10;
+collarSpacing = 7;
 
-collarOffset = 6;
+collarOffset = 9;
 
 
 //==============================
