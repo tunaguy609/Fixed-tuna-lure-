@@ -96,6 +96,13 @@ eyeLocation = 32;
 
 leaderHole = 2.5;
 
+// Trumpet countersink at the nose face of the leader hole.
+// leaderHoleTrumpetDiameter: flare opening at the nose face (Z=0).
+// leaderHoleTrumpetDepth: how far back the cone transitions to the straight bore.
+leaderHoleTrumpetDiameter = 5.5;
+
+leaderHoleTrumpetDepth = 4;
+
 skirtPocketDiameter = 16;
 
 skirtPocketDepth = 20;
@@ -304,6 +311,22 @@ module leader_bore()
 }
 
 //-------------------------------------------------------------
+// Leader bore trumpet (countersink)
+// Cone that flares the leader hole entry at the nose face (Z=0)
+// from leaderHole diameter at depth back to leaderHoleTrumpetDiameter
+// at the face, giving a smooth trumpet-style water entry.
+//-------------------------------------------------------------
+module leader_bore_trumpet()
+{
+    translate([0, 0, -0.01])
+        cylinder(
+            h    = leaderHoleTrumpetDepth,
+            d1   = leaderHoleTrumpetDiameter,   // wide at the nose face
+            d2   = leaderHole                   // narrows to bore diameter
+        );
+}
+
+//-------------------------------------------------------------
 // Skirt pocket
 //-------------------------------------------------------------
 module skirt_pocket()
@@ -364,7 +387,10 @@ difference()
 
     // Internal features
     if (showLeaderHole)
+    {
         leader_bore();
+        leader_bore_trumpet();
+    }
 
     if (showSkirtPocket)
         skirt_pocket();
