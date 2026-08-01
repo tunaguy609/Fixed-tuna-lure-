@@ -269,15 +269,16 @@ module rear_assembly()
 //-------------------------------------------------------------
 // Circumferential groove
 //-------------------------------------------------------------
-module groove(zPos, w = grooveWidth)
+module groove(zPos, w = grooveWidth, rearRaise = grooveRearEdgeRaise)
 {
     // Asymmetric cupped profile: steep forward wall with rolled lip to grab water,
     // flat bottom, aggressively cupped rear wall facing the nose.
-    // All radii/depth/raise scale proportionally when a non-default width is used.
+    // All radii/depth scale proportionally when a non-default width is used.
+    // rearRaise = 0 gives a fully flush, streamlined rear lip.
     s    = w / grooveWidth;
     er   = grooveEdgeRadius    * s;
     rer  = grooveRearEdgeRadius * s;
-    rera = grooveRearEdgeRaise  * s;
+    rera = rearRaise            * s;
     d    = grooveDepth          * s;
 
     translate([0, 0, zPos])
@@ -410,7 +411,7 @@ difference()
         if (showGrooves)
         {
             groove_rear_ridge(groove1);
-            groove_rear_ridge(groove2, groove2Width);
+            // groove2 is on the nose taper — no rear ridge needed
         }
     }
 
@@ -418,7 +419,7 @@ difference()
     if (showGrooves)
     {
         groove(groove1);
-        groove(groove2, groove2Width);
+        groove(groove2, groove2Width, 0);  // rearRaise=0: flush, streamlined rear lip
     }
 
     // Eye pockets
