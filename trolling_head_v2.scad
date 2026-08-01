@@ -250,12 +250,6 @@ module rear_assembly()
 
         if (showCollars)
         {
-            // Collar #1
-            retaining_collar(
-                headLength
-                + collarOffset
-            );
-
             // Collar #2
             retaining_collar(
                 headLength
