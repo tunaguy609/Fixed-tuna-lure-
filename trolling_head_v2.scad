@@ -57,11 +57,12 @@ collarOffset = 9;
 // JET TUBES
 //==============================
 
-jetTubeDiameter = 2.0;
+jetTubeDiameter = 1.5;
 
 jetTubeOffset = 2.5;
 
-jetTubeLength = eyeLocation - eyeFlatDiameter / 2 - 2;
+// Z position where tubes exit the body side wall (just in front of eye pads)
+jetTubeExitZ = eyeLocation - eyeFlatDiameter / 2 - 1;
 
 
 //==============================
@@ -337,14 +338,23 @@ module skirt_pocket()
 
 //-------------------------------------------------------------
 // Jet tubes
-// Two bores offset along the Y-axis, from the nose face to
-// just before the eye pads begin.
+// Two angled bores: enter at the nose face (offset from center along Y),
+// angle outward through the body, and exit the side wall just in front
+// of the eye pads.
 //-------------------------------------------------------------
 module jet_tube(side = 1)
 {
+    // Direction from entry (y=side*jetTubeOffset, z=0)
+    // to exit  (y=side*bodyDiameter/2, z=jetTubeExitZ).
+    deltaY = bodyDiameter / 2 - jetTubeOffset;
+    deltaZ = jetTubeExitZ;
+    tubeLength = sqrt(deltaY * deltaY + deltaZ * deltaZ) + 2;
+    angle = atan2(deltaY, deltaZ);
+
     translate([0, side * jetTubeOffset, -0.1])
+        rotate([-side * angle, 0, 0])
         cylinder(
-            h = jetTubeLength + 0.1,
+            h = tubeLength,
             d = jetTubeDiameter
         );
 }
