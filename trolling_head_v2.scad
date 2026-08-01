@@ -48,10 +48,6 @@ collarWidth = 2;
 
 collarHeight = 1;
 
-collarSpacing = 3;
-
-collarOffset = 9;
-
 
 //==============================
 // JET TUBES
@@ -244,18 +240,13 @@ module rear_assembly()
     {
         head_body();
 
-        shoulder_blend();
-
         skirt_spigot();
 
         if (showCollars)
         {
-            // Collar #2
+            // Retaining collar at the tip of the spigot
             retaining_collar(
-                headLength
-                + collarOffset
-                + collarWidth
-                + collarSpacing
+                headLength + spigotLength - collarWidth
             );
         }
 
