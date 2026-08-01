@@ -338,23 +338,25 @@ module skirt_pocket()
 
 //-------------------------------------------------------------
 // Jet tubes
-// Two angled bores: enter at the nose face (offset from center along Y),
-// angle outward through the body, and exit the side wall just in front
-// of the eye pads.
+// L-shaped channel: straight axial bore from nose face runs
+// to jetTubeExitZ, then a perpendicular bore exits through the
+// body side wall at that Z position creating a visible round hole.
 //-------------------------------------------------------------
 module jet_tube(side = 1)
 {
-    // Direction from entry (y=side*jetTubeOffset, z=0)
-    // to exit  (y=side*bodyDiameter/2, z=jetTubeExitZ).
-    deltaY = bodyDiameter / 2 - jetTubeOffset;
-    deltaZ = jetTubeExitZ;
-    tubeLength = sqrt(deltaY * deltaY + deltaZ * deltaZ) + 12;
-    angle = atan2(deltaY, deltaZ);
-
+    // Axial bore from nose face to the exit Z position
     translate([0, side * jetTubeOffset, -0.1])
-        rotate([-side * angle, 0, 0])
         cylinder(
-            h = tubeLength,
+            h = jetTubeExitZ + 0.1,
+            d = jetTubeDiameter
+        );
+
+    // Perpendicular exit bore: from outside the body wall inward
+    // to meet the axial bore, creating a visible side exit hole.
+    translate([0, side * (bodyDiameter / 2 + 1), jetTubeExitZ])
+        rotate([side * 90, 0, 0])
+        cylinder(
+            h = bodyDiameter / 2 - jetTubeOffset + 2,
             d = jetTubeDiameter
         );
 }
