@@ -80,6 +80,10 @@ grooveRearRidgeHeight = 0.5;
 
 groove1 = 46;
 
+// Nose groove: starts 11 mm from nose, ends 12 mm from nose (1 mm wide)
+groove2     = 11;
+groove2Width = 1;
+
 
 //==============================
 // EYES
@@ -265,33 +269,36 @@ module rear_assembly()
 //-------------------------------------------------------------
 // Circumferential groove
 //-------------------------------------------------------------
-module groove(zPos)
+module groove(zPos, w = grooveWidth)
 {
     // Asymmetric cupped profile: steep forward wall with rolled lip to grab water,
     // flat bottom, aggressively cupped rear wall facing the nose.
-    // grooveEdgeRadius     = forward lip roll.
-    // grooveRearEdgeRadius = rear lip roll (larger = more cup toward nose).
-    // grooveRearEdgeRaise  = how much shallower the rear side is vs the front (mm).
-    // In 2D rotate_extrude space: X = radius, Y = axial (0 = nose side).
+    // All radii/depth/raise scale proportionally when a non-default width is used.
+    s    = w / grooveWidth;
+    er   = grooveEdgeRadius    * s;
+    rer  = grooveRearEdgeRadius * s;
+    rera = grooveRearEdgeRaise  * s;
+    d    = grooveDepth          * s;
+
     translate([0, 0, zPos])
         rotate_extrude(convexity = 10)
         hull()
         {
             // Rolled forward lip
-            translate([bodyDiameter / 2 - grooveEdgeRadius, grooveEdgeRadius])
-                circle(r = grooveEdgeRadius);
+            translate([bodyDiameter / 2 - er, er])
+                circle(r = er);
 
             // Bottom, near front
-            translate([bodyDiameter / 2 - grooveDepth, grooveWidth * 0.2])
-                circle(r = grooveEdgeRadius * 0.3);
+            translate([bodyDiameter / 2 - d, w * 0.2])
+                circle(r = er * 0.3);
 
-            // Bottom, near rear — raised by grooveRearEdgeRaise
-            translate([bodyDiameter / 2 - grooveDepth + grooveRearEdgeRaise, grooveWidth * 0.88])
-                circle(r = grooveRearEdgeRadius * 0.3);
+            // Bottom, near rear — raised by rera
+            translate([bodyDiameter / 2 - d + rera, w * 0.88])
+                circle(r = rer * 0.3);
 
-            // Aggressively rolled rear lip — raised by grooveRearEdgeRaise
-            translate([bodyDiameter / 2 - grooveRearEdgeRadius + grooveRearEdgeRaise, grooveWidth - grooveRearEdgeRadius])
-                circle(r = grooveRearEdgeRadius);
+            // Aggressively rolled rear lip — raised by rera
+            translate([bodyDiameter / 2 - rer + rera, w - rer])
+                circle(r = rer);
         }
 }
 
@@ -301,9 +308,9 @@ module groove(zPos)
 // grooveRearRidgeHeight above the body surface, giving the rear
 // rim an outside diameter = bodyDiameter + 2*grooveRearRidgeHeight.
 //-------------------------------------------------------------
-module groove_rear_ridge(zPos)
+module groove_rear_ridge(zPos, w = grooveWidth)
 {
-    translate([0, 0, zPos + grooveWidth])
+    translate([0, 0, zPos + w])
         rotate_extrude(convexity = 10)
         translate([bodyDiameter / 2 + grooveRearRidgeHeight / 2, 0])
             circle(r = grooveRearRidgeHeight / 2);
@@ -403,6 +410,7 @@ difference()
         if (showGrooves)
         {
             groove_rear_ridge(groove1);
+            groove_rear_ridge(groove2, groove2Width);
         }
     }
 
@@ -410,6 +418,7 @@ difference()
     if (showGrooves)
     {
         groove(groove1);
+        groove(groove2, groove2Width);
     }
 
     // Eye pockets
