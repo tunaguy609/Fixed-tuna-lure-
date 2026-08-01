@@ -2,9 +2,9 @@
 //
 // HAYWIRE TACKLE
 //
-// Production Offshore Trolling Head
+// Ballyhoo Prototype
 //
-// Version 4.0
+// Version 1.0
 //
 ///////////////////////////////////////////////////////////////
 
@@ -22,7 +22,7 @@ $fn = preview ? 32 : 300;
 // MAIN DIMENSIONS
 //==============================
 
-headLength = 65;
+headLength = 55;
 
 bodyDiameter = 24;
 
@@ -35,7 +35,7 @@ noseDiameter = 7;
 
 spigotDiameter = 19;
 
-spigotLength = 15;
+spigotLength = 26;
 
 shoulderRadius = 1;
 
@@ -48,30 +48,9 @@ collarWidth = 2;
 
 collarHeight = 1;
 
-collarSpacing = 10;
+collarSpacing = 13;
 
-collarOffset = 6;
-
-
-//==============================
-// GROOVES
-//==============================
-
-grooveWidth = 4.0;
-
-grooveDepth = 1.5;
-
-grooveEdgeRadius = 0.6;
-
-grooveRearEdgeRadius = 1.5;
-
-grooveRearEdgeRaise = 0.5;
-
-grooveRearRidgeHeight = 0.5;
-
-groove1 = 56;
-
-groove2 = 62;
+collarOffset = 9;
 
 
 //==============================
@@ -82,7 +61,33 @@ eyeDiameter = 10;
 
 eyeDepth = 2.5;
 
-eyeLocation = 50;
+eyeLocation = 32;
+
+
+//==============================
+// JET TUBES
+//==============================
+
+jetTubeDiameter = 2.5;
+
+// Entry bore: just past nose taper where body becomes full diameter
+jetTubeEntryZ = 14;
+
+// Exit bore: between the eyes
+jetTubeExitZ = eyeLocation;
+
+
+//==============================
+// GROOVES
+//==============================
+
+grooveWidth = 2.5;
+
+grooveDepth = 1.5;
+
+groove1 = 46;
+
+groove2 = 52;
 
 
 //==============================
@@ -110,6 +115,8 @@ showLeaderHole = true;
 
 showSkirtPocket = true;
 
+showJetTubes = true;
+
 
 ///////////////////////////////////////////////////////////////
 //
@@ -133,14 +140,9 @@ profile = [
     [11.84,             10.0],
     [12.00,             12.0],  // tangent join to straight body
 
-    // Straight body (24 mm OD) up to groove rear edge
-    [12.00, 53.0],
-    [12.00, 60.0],   // groove1 rear edge (groove1 + grooveWidth)
-
-    // Raised body behind groove — flush with outer edge of rear groove lip
-    // radius = bodyDiameter/2 + grooveRearEdgeRaise = 12 + 0.5 = 12.5 mm
-    [12.50, 60.0],
-    [12.50, 65.0]
+    // Straight body (24 mm OD)
+    [12.00, 43.0],
+    [12.00, 55.0]
 ];
 
 module head_body()
@@ -230,6 +232,12 @@ module rear_assembly()
 
         if (showCollars)
         {
+            // Collar #1
+            retaining_collar(
+                headLength
+                + collarOffset
+            );
+
             // Collar #2
             retaining_collar(
                 headLength
@@ -253,46 +261,17 @@ module rear_assembly()
 //-------------------------------------------------------------
 module groove(zPos)
 {
-    // Asymmetric cupped profile: steep forward wall with rolled lip to grab water,
-    // flat bottom, aggressively cupped rear wall facing the nose.
-    // grooveEdgeRadius     = forward lip roll.
-    // grooveRearEdgeRadius = rear lip roll (larger = more cup toward nose).
-    // grooveRearEdgeRaise  = how much shallower the rear side is vs the front (mm).
+    // Asymmetric cupped profile: steep forward wall to grab water,
+    // flat bottom, gently ramped rear wall.
     // In 2D rotate_extrude space: X = radius, Y = axial (0 = nose side).
     translate([0, 0, zPos])
         rotate_extrude(convexity = 10)
-        hull()
-        {
-            // Rolled forward lip
-            translate([bodyDiameter / 2 - grooveEdgeRadius, grooveEdgeRadius])
-                circle(r = grooveEdgeRadius);
-
-            // Bottom, near front
-            translate([bodyDiameter / 2 - grooveDepth, grooveWidth * 0.2])
-                circle(r = grooveEdgeRadius * 0.3);
-
-            // Bottom, near rear — raised by grooveRearEdgeRaise
-            translate([bodyDiameter / 2 - grooveDepth + grooveRearEdgeRaise, grooveWidth * 0.88])
-                circle(r = grooveRearEdgeRadius * 0.3);
-
-            // Aggressively rolled rear lip — raised by grooveRearEdgeRaise
-            translate([bodyDiameter / 2 - grooveRearEdgeRadius + grooveRearEdgeRaise, grooveWidth - grooveRearEdgeRadius])
-                circle(r = grooveRearEdgeRadius);
-        }
-}
-
-//-------------------------------------------------------------
-// Groove rear ridge
-// Annular bead at the rear edge of the groove that protrudes
-// grooveRearRidgeHeight above the body surface, giving the rear
-// rim an outside diameter = bodyDiameter + 2*grooveRearRidgeHeight.
-//-------------------------------------------------------------
-module groove_rear_ridge(zPos)
-{
-    translate([0, 0, zPos + grooveWidth])
-        rotate_extrude(convexity = 10)
-        translate([bodyDiameter / 2 + grooveRearRidgeHeight / 2, 0])
-            circle(r = grooveRearRidgeHeight / 2);
+        polygon([
+            [bodyDiameter / 2,               0                    ],  // surface, forward edge
+            [bodyDiameter / 2 - grooveDepth, grooveWidth * 0.2   ],  // bottom, near front
+            [bodyDiameter / 2 - grooveDepth, grooveWidth * 0.75  ],  // bottom, near rear
+            [bodyDiameter / 2,               grooveWidth          ]   // surface, rear edge
+        ]);
 }
 
 //-------------------------------------------------------------
@@ -336,6 +315,21 @@ module skirt_pocket()
         );
 }
 
+//-------------------------------------------------------------
+// Jet bore
+// Straight through-bore perpendicular to body axis at zPos.
+// Creates a visible entry hole on one side and exit on the other.
+//-------------------------------------------------------------
+module jet_bore(zPos)
+{
+    translate([0, -(bodyDiameter / 2 + 1), zPos])
+        rotate([-90, 0, 0])
+        cylinder(
+            h = bodyDiameter + 2,
+            d = jetTubeDiameter
+        );
+}
+
 ///////////////////////////////////////////////////////////////
 //
 // FINAL MODEL
@@ -347,11 +341,6 @@ difference()
     union()
     {
         rear_assembly();
-
-        if (showGrooves)
-        {
-            groove_rear_ridge(groove1);
-        }
     }
 
     // Decorative grooves
@@ -374,4 +363,11 @@ difference()
 
     if (showSkirtPocket)
         skirt_pocket();
+
+    // Jet tubes
+    if (showJetTubes)
+    {
+        jet_bore(jetTubeEntryZ);
+        jet_bore(jetTubeExitZ);
+    }
 }

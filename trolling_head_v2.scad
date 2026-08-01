@@ -4,7 +4,7 @@
 //
 // Production Offshore Trolling Head
 //
-// Version 4.0
+// Version 4.5
 //
 ///////////////////////////////////////////////////////////////
 
@@ -22,7 +22,7 @@ $fn = preview ? 32 : 300;
 // MAIN DIMENSIONS
 //==============================
 
-headLength = 65;
+headLength = 55;
 
 bodyDiameter = 24;
 
@@ -48,9 +48,22 @@ collarWidth = 2;
 
 collarHeight = 1;
 
-collarSpacing = 10;
+collarSpacing = 13;
 
-collarOffset = 6;
+collarOffset = 9;
+
+
+//==============================
+// JET TUBES
+//==============================
+
+jetTubeDiameter = 2.5;
+
+// Entry: outside bottom wall, 13 mm back from nose
+jetTubeEntryZ = 13;
+
+// Exit: outside top wall, 38 mm back from nose
+jetTubeExitZ = 38;
 
 
 //==============================
@@ -69,9 +82,7 @@ grooveRearEdgeRaise = 0.5;
 
 grooveRearRidgeHeight = 0.5;
 
-groove1 = 56;
-
-groove2 = 62;
+groove1 = 46;
 
 
 //==============================
@@ -82,7 +93,7 @@ eyeDiameter = 10;
 
 eyeDepth = 2.5;
 
-eyeLocation = 50;
+eyeLocation = 32;
 
 
 //==============================
@@ -90,6 +101,13 @@ eyeLocation = 50;
 //==============================
 
 leaderHole = 2.5;
+
+// Trumpet countersink at the nose face of the leader hole.
+// leaderHoleTrumpetDiameter: flare opening at the nose face (Z=0).
+// leaderHoleTrumpetDepth: how far back the cone transitions to the straight bore.
+leaderHoleTrumpetDiameter = 5.5;
+
+leaderHoleTrumpetDepth = 4;
 
 skirtPocketDiameter = 16;
 
@@ -109,6 +127,8 @@ showCollars = true;
 showLeaderHole = true;
 
 showSkirtPocket = true;
+
+showJetTubes = true;
 
 
 ///////////////////////////////////////////////////////////////
@@ -134,13 +154,13 @@ profile = [
     [12.00,             12.0],  // tangent join to straight body
 
     // Straight body (24 mm OD) up to groove rear edge
-    [12.00, 53.0],
-    [12.00, 60.0],   // groove1 rear edge (groove1 + grooveWidth)
+    [12.00, 43.0],
+    [12.00, 50.0],   // groove1 rear edge (groove1 + grooveWidth)
 
     // Raised body behind groove — flush with outer edge of rear groove lip
     // radius = bodyDiameter/2 + grooveRearEdgeRaise = 12 + 0.5 = 12.5 mm
-    [12.50, 60.0],
-    [12.50, 65.0]
+    [12.50, 50.0],
+    [12.50, 55.0]
 ];
 
 module head_body()
@@ -325,6 +345,22 @@ module leader_bore()
 }
 
 //-------------------------------------------------------------
+// Leader bore trumpet (countersink)
+// Cone that flares the leader hole entry at the nose face (Z=0)
+// from leaderHole diameter at depth back to leaderHoleTrumpetDiameter
+// at the face, giving a smooth trumpet-style water entry.
+//-------------------------------------------------------------
+module leader_bore_trumpet()
+{
+    translate([0, 0, -0.01])
+        cylinder(
+            h    = leaderHoleTrumpetDepth,
+            d1   = leaderHoleTrumpetDiameter,   // wide at the nose face
+            d2   = leaderHole                   // narrows to bore diameter
+        );
+}
+
+//-------------------------------------------------------------
 // Skirt pocket
 //-------------------------------------------------------------
 module skirt_pocket()
@@ -334,6 +370,26 @@ module skirt_pocket()
             h = skirtPocketDepth + 0.1,
             d = skirtPocketDiameter
         );
+}
+
+//-------------------------------------------------------------
+// Vent slot bore
+// Angled bore entering on the outside bottom wall at jetTubeEntryZ,
+// passing through the body, and exiting on the outside top wall at
+// jetTubeExitZ. Hull of two spheres gives the correct angled capsule.
+//-------------------------------------------------------------
+module vent_slot_bore()
+{
+    hull()
+    {
+        // Entry: outside bottom wall
+        translate([0, -(bodyDiameter / 2), jetTubeEntryZ])
+            sphere(d = jetTubeDiameter);
+
+        // Exit: outside top wall
+        translate([0, (bodyDiameter / 2), jetTubeExitZ])
+            sphere(d = jetTubeDiameter);
+    }
 }
 
 ///////////////////////////////////////////////////////////////
@@ -358,7 +414,6 @@ difference()
     if (showGrooves)
     {
         groove(groove1);
-        groove(groove2);
     }
 
     // Eye pockets
@@ -370,8 +425,17 @@ difference()
 
     // Internal features
     if (showLeaderHole)
+    {
         leader_bore();
+        leader_bore_trumpet();
+    }
 
     if (showSkirtPocket)
         skirt_pocket();
+
+    // Vent slot: angled bore from nose bottom to body top
+    if (showJetTubes)
+    {
+        vent_slot_bore();
+    }
 }
