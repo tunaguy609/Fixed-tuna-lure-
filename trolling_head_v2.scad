@@ -359,12 +359,12 @@ module leader_bore_trumpet()
 //-------------------------------------------------------------
 module skirt_pocket()
 {
-    // Conical taper: 2.5mm at body/spigot join, 7mm at spigot tip
+    // Conical taper: 7mm at body/spigot join, tapering to 2.5mm at spigot tip
     translate([0, 0, headLength])
         cylinder(
             h  = skirtPocketDepth + 0.1,
-            d1 = skirtPocketDiameterNarrow,
-            d2 = skirtPocketDiameterWide
+            d1 = skirtPocketDiameterWide,
+            d2 = skirtPocketDiameterNarrow
         );
 }
 
