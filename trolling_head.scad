@@ -76,10 +76,6 @@ eyeDepth = 2.5;
 
 eyeLocation = 50;
 
-eyeFlatDepth = .6;
-
-eyeFlatDiameter = 14;
-
 
 //==============================
 // INTERNAL
@@ -264,24 +260,6 @@ module groove(zPos)
 }
 
 //-------------------------------------------------------------
-// Eye pad
-//-------------------------------------------------------------
-module eye_pad(side = 1)
-{
-    translate([
-        side * (bodyDiameter / 2 - eyeFlatDepth / 2),
-        0,
-        eyeLocation
-    ])
-        rotate([0, 90, 0])
-        cylinder(
-            d = eyeFlatDiameter,
-            h = eyeFlatDepth,
-            center = true
-        );
-}
-
-//-------------------------------------------------------------
 // Eye pocket
 //-------------------------------------------------------------
 module eye_pocket(side = 1)
@@ -333,12 +311,6 @@ difference()
     union()
     {
         rear_assembly();
-
-        if (showEyes)
-        {
-            eye_pad(1);
-            eye_pad(-1);
-        }
     }
 
     // Decorative grooves
