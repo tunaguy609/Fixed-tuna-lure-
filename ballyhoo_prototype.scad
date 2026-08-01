@@ -1,0 +1,382 @@
+///////////////////////////////////////////////////////////////
+//
+// HAYWIRE TACKLE
+//
+// Ballyhoo Prototype
+//
+// Version 1.0
+//
+///////////////////////////////////////////////////////////////
+
+
+//==============================
+// QUALITY
+//==============================
+
+preview = true;
+
+$fn = preview ? 32 : 300;
+
+
+//==============================
+// MAIN DIMENSIONS
+//==============================
+
+headLength = 55;
+
+bodyDiameter = 24;
+
+noseDiameter = 7;
+
+
+//==============================
+// REAR
+//==============================
+
+spigotDiameter = 19;
+
+spigotLength = 26;
+
+shoulderRadius = 1;
+
+
+//==============================
+// COLLARS
+//==============================
+
+collarWidth = 2;
+
+collarHeight = 1;
+
+collarSpacing = 13;
+
+collarOffset = 9;
+
+
+//==============================
+// EYES
+//==============================
+
+eyeDiameter = 10;
+
+eyeDepth = 2.5;
+
+eyeLocation = 32;
+
+
+//==============================
+// JET TUBES
+//==============================
+
+jetTubeDiameter = 1.5;
+
+jetTubeOffset = 2.5;
+
+// Z position where tubes exit the body side wall (between the eyes)
+jetTubeExitZ = eyeLocation;
+
+
+//==============================
+// GROOVES
+//==============================
+
+grooveWidth = 2.5;
+
+grooveDepth = 1.5;
+
+groove1 = 46;
+
+groove2 = 52;
+
+
+//==============================
+// INTERNAL
+//==============================
+
+leaderHole = 2.5;
+
+skirtPocketDiameter = 16;
+
+skirtPocketDepth = 20;
+
+
+//==============================
+// OPTIONS
+//==============================
+
+showGrooves = true;
+
+showEyes = true;
+
+showCollars = true;
+
+showLeaderHole = true;
+
+showSkirtPocket = true;
+
+showJetTubes = true;
+
+
+///////////////////////////////////////////////////////////////
+//
+// BODY PROFILE
+//
+///////////////////////////////////////////////////////////////
+
+// Radius profile from nose (Z=0) to rear (Z=headLength)
+// Format: [radius, z]
+
+profile = [
+
+    // Rounded nose – circular-arc ogive, tangent to body cylinder at Z = 12 mm.
+    // Arc center at (r = -0.72, z = 12), radius = 12.72 mm; gives a convex dome.
+    [noseDiameter / 2,  0.0],   // face-plate edge (r = 3.5)
+    [7.14,              2.0],
+    [8.27,              3.0],
+    [9.17,              4.0],
+    [10.50,             6.0],
+    [11.35,             8.0],
+    [11.84,             10.0],
+    [12.00,             12.0],  // tangent join to straight body
+
+    // Straight body (24 mm OD)
+    [12.00, 43.0],
+    [12.00, 55.0]
+];
+
+module head_body()
+{
+    rotate_extrude(convexity = 20)
+    polygon(
+        concat(
+            [[0, 0]],
+            profile,
+            [[0, headLength]]
+        )
+    );
+}
+
+///////////////////////////////////////////////////////////////
+//
+// SPIGOT & COLLARS
+//
+///////////////////////////////////////////////////////////////
+
+//-------------------------------------------------------------
+// Straight skirt spigot
+//-------------------------------------------------------------
+module skirt_spigot()
+{
+    translate([0, 0, headLength])
+        cylinder(
+            h = spigotLength,
+            d = spigotDiameter
+        );
+}
+
+//-------------------------------------------------------------
+// Shoulder blend
+// Creates a small 1 mm radius-like transition.
+// Set shoulderRadius = 0 for a sharp shoulder.
+//-------------------------------------------------------------
+module shoulder_blend()
+{
+    if (shoulderRadius > 0)
+    {
+        translate([0, 0, headLength])
+            cylinder(
+                h = shoulderRadius,
+                d1 = bodyDiameter,
+                d2 = spigotDiameter
+            );
+    }
+}
+
+//-------------------------------------------------------------
+// Rounded collar
+// Uses rotate_extrude of a rounded 2D profile for performance.
+//-------------------------------------------------------------
+module retaining_collar(zPos)
+{
+    translate([0, 0, zPos])
+        rotate_extrude(convexity = 10)
+        hull()
+        {
+            translate([
+                spigotDiameter / 2 + collarHeight / 2,
+                collarHeight / 2
+            ])
+                circle(r = collarHeight / 2);
+
+            translate([
+                spigotDiameter / 2 + collarHeight / 2,
+                collarWidth - collarHeight / 2
+            ])
+                circle(r = collarHeight / 2);
+        }
+}
+
+//-------------------------------------------------------------
+// Rear Assembly
+//-------------------------------------------------------------
+module rear_assembly()
+{
+    union()
+    {
+        head_body();
+
+        shoulder_blend();
+
+        skirt_spigot();
+
+        if (showCollars)
+        {
+            // Collar #1
+            retaining_collar(
+                headLength
+                + collarOffset
+            );
+
+            // Collar #2
+            retaining_collar(
+                headLength
+                + collarOffset
+                + collarWidth
+                + collarSpacing
+            );
+        }
+
+    }
+}
+
+///////////////////////////////////////////////////////////////
+//
+// MACHINED FEATURES
+//
+///////////////////////////////////////////////////////////////
+
+//-------------------------------------------------------------
+// Circumferential groove
+//-------------------------------------------------------------
+module groove(zPos)
+{
+    // Asymmetric cupped profile: steep forward wall to grab water,
+    // flat bottom, gently ramped rear wall.
+    // In 2D rotate_extrude space: X = radius, Y = axial (0 = nose side).
+    translate([0, 0, zPos])
+        rotate_extrude(convexity = 10)
+        polygon([
+            [bodyDiameter / 2,               0                    ],  // surface, forward edge
+            [bodyDiameter / 2 - grooveDepth, grooveWidth * 0.2   ],  // bottom, near front
+            [bodyDiameter / 2 - grooveDepth, grooveWidth * 0.75  ],  // bottom, near rear
+            [bodyDiameter / 2,               grooveWidth          ]   // surface, rear edge
+        ]);
+}
+
+//-------------------------------------------------------------
+// Eye pocket
+//-------------------------------------------------------------
+module eye_pocket(side = 1)
+{
+    translate([
+        side * (bodyDiameter / 2 + 0.01),
+        0,
+        eyeLocation
+    ])
+        rotate([0, -90 * side, 0])
+        cylinder(
+            d = eyeDiameter,
+            h = eyeDepth
+        );
+}
+
+//-------------------------------------------------------------
+// Leader bore
+//-------------------------------------------------------------
+module leader_bore()
+{
+    translate([0, 0, -1])
+        cylinder(
+            h = headLength + spigotLength + 2,
+            d = leaderHole
+        );
+}
+
+//-------------------------------------------------------------
+// Skirt pocket
+//-------------------------------------------------------------
+module skirt_pocket()
+{
+    translate([0, 0, headLength + spigotLength - skirtPocketDepth])
+        cylinder(
+            h = skirtPocketDepth + 0.1,
+            d = skirtPocketDiameter
+        );
+}
+
+//-------------------------------------------------------------
+// Jet tubes
+// L-shaped channel: straight axial bore from nose face runs
+// to jetTubeExitZ, then a perpendicular bore exits through the
+// body side wall at that Z position creating a visible round hole.
+//-------------------------------------------------------------
+module jet_tube(side = 1)
+{
+    // Axial bore from nose face to the exit Z position
+    translate([0, side * jetTubeOffset, -0.1])
+        cylinder(
+            h = jetTubeExitZ + 0.1,
+            d = jetTubeDiameter
+        );
+
+    // Perpendicular exit bore: from outside the body wall inward
+    // to meet the axial bore, creating a visible side exit hole.
+    translate([0, side * (bodyDiameter / 2 + 1), jetTubeExitZ])
+        rotate([side * 90, 0, 0])
+        cylinder(
+            h = bodyDiameter / 2 - jetTubeOffset + 2,
+            d = jetTubeDiameter
+        );
+}
+
+///////////////////////////////////////////////////////////////
+//
+// FINAL MODEL
+//
+///////////////////////////////////////////////////////////////
+
+difference()
+{
+    union()
+    {
+        rear_assembly();
+    }
+
+    // Decorative grooves
+    if (showGrooves)
+    {
+        groove(groove1);
+        groove(groove2);
+    }
+
+    // Eye pockets
+    if (showEyes)
+    {
+        eye_pocket(1);
+        eye_pocket(-1);
+    }
+
+    // Internal features
+    if (showLeaderHole)
+        leader_bore();
+
+    if (showSkirtPocket)
+        skirt_pocket();
+
+    // Jet tubes
+    if (showJetTubes)
+    {
+        jet_tube(1);
+        jet_tube(-1);
+    }
+}
