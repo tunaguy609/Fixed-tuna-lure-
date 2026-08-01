@@ -67,6 +67,8 @@ grooveRearEdgeRadius = 1.0;
 
 grooveRearEdgeRaise = 0.5;
 
+grooveRearRidgeHeight = 0.5;
+
 groove1 = 56;
 
 groove2 = 62;
@@ -281,6 +283,20 @@ module groove(zPos)
 }
 
 //-------------------------------------------------------------
+// Groove rear ridge
+// Annular bead at the rear edge of the groove that protrudes
+// grooveRearRidgeHeight above the body surface, giving the rear
+// rim an outside diameter = bodyDiameter + 2*grooveRearRidgeHeight.
+//-------------------------------------------------------------
+module groove_rear_ridge(zPos)
+{
+    translate([0, 0, zPos + grooveWidth])
+        rotate_extrude(convexity = 10)
+        translate([bodyDiameter / 2 + grooveRearRidgeHeight / 2, 0])
+            circle(r = grooveRearRidgeHeight / 2);
+}
+
+//-------------------------------------------------------------
 // Eye pocket
 //-------------------------------------------------------------
 module eye_pocket(side = 1)
@@ -332,6 +348,11 @@ difference()
     union()
     {
         rear_assembly();
+
+        if (showGrooves)
+        {
+            groove_rear_ridge(groove1);
+        }
     }
 
     // Decorative grooves
