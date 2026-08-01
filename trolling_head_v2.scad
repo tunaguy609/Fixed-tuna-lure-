@@ -153,9 +153,14 @@ profile = [
     [11.84,             10.0],
     [12.00,             12.0],  // tangent join to straight body
 
-    // Straight body (24 mm OD)
+    // Straight body (24 mm OD) up to groove rear edge
     [12.00, 43.0],
-    [12.00, 55.0]
+    [12.00, 50.0],   // groove1 rear edge (groove1 + grooveWidth)
+
+    // Raised body behind groove — flush with outer edge of rear groove lip
+    // radius = bodyDiameter/2 + grooveRearEdgeRaise = 12 + 0.5 = 12.5 mm
+    [12.50, 50.0],
+    [12.50, 55.0]
 ];
 
 module head_body()
