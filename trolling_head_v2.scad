@@ -35,7 +35,7 @@ noseDiameter = 7;
 
 spigotDiameter = 19;
 
-spigotLength = 22;
+spigotLength = 26;
 
 shoulderRadius = 1;
 
@@ -48,7 +48,7 @@ collarWidth = 2;
 
 collarHeight = 1;
 
-collarSpacing = 7;
+collarSpacing = 13;
 
 collarOffset = 9;
 
