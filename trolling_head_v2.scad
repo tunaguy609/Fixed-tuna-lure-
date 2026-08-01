@@ -54,6 +54,17 @@ collarOffset = 9;
 
 
 //==============================
+// JET TUBES
+//==============================
+
+jetTubeDiameter = 2.0;
+
+jetTubeOffset = 2.5;
+
+jetTubeLength = eyeLocation - eyeFlatDiameter / 2 - 2;
+
+
+//==============================
 // GROOVES
 //==============================
 
@@ -105,6 +116,8 @@ showCollars = true;
 showLeaderHole = true;
 
 showSkirtPocket = true;
+
+showJetTubes = true;
 
 
 ///////////////////////////////////////////////////////////////
@@ -322,6 +335,20 @@ module skirt_pocket()
         );
 }
 
+//-------------------------------------------------------------
+// Jet tubes
+// Two bores offset along the Y-axis, from the nose face to
+// just before the eye pads begin.
+//-------------------------------------------------------------
+module jet_tube(side = 1)
+{
+    translate([0, side * jetTubeOffset, -0.1])
+        cylinder(
+            h = jetTubeLength + 0.1,
+            d = jetTubeDiameter
+        );
+}
+
 ///////////////////////////////////////////////////////////////
 //
 // FINAL MODEL
@@ -361,4 +388,11 @@ difference()
 
     if (showSkirtPocket)
         skirt_pocket();
+
+    // Jet tubes
+    if (showJetTubes)
+    {
+        jet_tube(1);
+        jet_tube(-1);
+    }
 }
