@@ -118,16 +118,16 @@ showSkirtPocket = true;
 
 profile = [
 
-    // Face plate edge
-    [noseDiameter / 2, 0.0],
-
-    // Short nose taper – cosine-eased expansion to full body width by Z = 12 mm
-    [4.07, 2.0],
-    [5.63, 4.0],
-    [7.75, 6.0],
-    [9.88, 8.0],
-    [11.43, 10.0],
-    [12.00, 12.0],
+    // Rounded nose – circular-arc ogive, tangent to body cylinder at Z = 12 mm.
+    // Arc center at (r = -0.72, z = 12), radius = 12.72 mm; gives a convex dome.
+    [noseDiameter / 2,  0.0],   // face-plate edge (r = 3.5)
+    [7.14,              2.0],
+    [8.27,              3.0],
+    [9.17,              4.0],
+    [10.50,             6.0],
+    [11.35,             8.0],
+    [11.84,             10.0],
+    [12.00,             12.0],  // tangent join to straight body
 
     // Straight body (24 mm OD)
     [12.00, 53.0],
