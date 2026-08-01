@@ -55,11 +55,11 @@ collarHeight = 1;
 
 jetTubeDiameter = 2.5;
 
-// Entry: outside bottom wall, 15 mm back from nose
-jetTubeEntryZ = 15;
+// Entry: outside bottom wall, 17 mm back from nose
+jetTubeEntryZ = 17;
 
-// Exit: outside top wall, 40 mm back from nose
-jetTubeExitZ = 40;
+// Exit: outside top wall, 42 mm back from nose
+jetTubeExitZ = 42;
 
 
 //==============================
