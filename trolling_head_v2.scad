@@ -65,6 +65,11 @@ jetTubeEntryZ = 12;
 // Exit: top of body, angled rearward through the body like a vent slot
 jetTubeExitZ = eyeLocation;
 
+// Lateral offset so the vent tunnel clears the central leader bore.
+// Minimum needed: (leaderHole + jetTubeDiameter) / 2 = 2.5 mm.
+// 5 mm gives a comfortable 2.5 mm wall between the two bores.
+ventXOffset = 5;
+
 
 //==============================
 // GROOVES
@@ -326,12 +331,12 @@ module vent_slot_bore()
 {
     hull()
     {
-        // Entry: bottom of nose at its widest point – center on body surface
-        translate([0, -(bodyDiameter / 2), jetTubeEntryZ])
+        // Entry: bottom of nose at its widest point – offset in X to clear leader bore
+        translate([ventXOffset, -(bodyDiameter / 2), jetTubeEntryZ])
             sphere(d = jetTubeDiameter);
 
-        // Exit: top of body – center on body surface so full bore diameter opens
-        translate([0, (bodyDiameter / 2), jetTubeExitZ])
+        // Exit: top of body – same X offset keeps the whole tunnel clear of leader bore
+        translate([ventXOffset, (bodyDiameter / 2), jetTubeExitZ])
             sphere(d = jetTubeDiameter);
     }
 }
