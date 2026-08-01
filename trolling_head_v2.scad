@@ -95,6 +95,11 @@ eyeDepth = 2.5;
 
 eyeLocation = 32;
 
+// Flat cheek milled into each side around the eye pocket
+eyeFlatDiameter = 14;
+
+eyeFlatDepth = 0.8;
+
 
 //==============================
 // INTERNAL
@@ -124,6 +129,8 @@ skirtPocketDepth = spigotLength;
 showGrooves = true;
 
 showEyes = true;
+
+showEyeFlats = true;
 
 showCollars = true;
 
@@ -335,6 +342,25 @@ module eye_pocket(side = 1)
 }
 
 //-------------------------------------------------------------
+// Eye flat
+// Shallow disc milled into each side of the body around the eye,
+// creating a flat cheek that the eye sits on.
+//-------------------------------------------------------------
+module eye_flat(side = 1)
+{
+    translate([
+        side * (bodyDiameter / 2 + 0.01),
+        0,
+        eyeLocation
+    ])
+        rotate([0, -90 * side, 0])
+        cylinder(
+            d = eyeFlatDiameter,
+            h = eyeFlatDepth
+        );
+}
+
+//-------------------------------------------------------------
 // Leader bore
 //-------------------------------------------------------------
 module leader_bore()
@@ -427,6 +453,13 @@ difference()
     {
         eye_pocket(1);
         eye_pocket(-1);
+    }
+
+    // Eye flats (cheeks)
+    if (showEyeFlats)
+    {
+        eye_flat(1);
+        eye_flat(-1);
     }
 
     // Internal features
