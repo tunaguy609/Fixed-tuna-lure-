@@ -22,7 +22,7 @@ $fn = preview ? 32 : 300;
 // MAIN DIMENSIONS
 //==============================
 
-headLength = 65;
+headLength = 55;
 
 bodyDiameter = 24;
 
@@ -61,9 +61,9 @@ grooveWidth = 2.5;
 
 grooveDepth = 1.5;
 
-groove1 = 56;
+groove1 = 46;
 
-groove2 = 62;
+groove2 = 52;
 
 
 //==============================
@@ -74,7 +74,7 @@ eyeDiameter = 10;
 
 eyeDepth = 2.5;
 
-eyeLocation = 50;
+eyeLocation = 38;
 
 eyeFlatDepth = .6;
 
@@ -130,8 +130,8 @@ profile = [
     [12.00,             12.0],  // tangent join to straight body
 
     // Straight body (24 mm OD)
-    [12.00, 53.0],
-    [12.00, 65.0]
+    [12.00, 43.0],
+    [12.00, 55.0]
 ];
 
 module head_body()
