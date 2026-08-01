@@ -105,9 +105,12 @@ leaderHoleTrumpetDiameter = 5.5;
 
 leaderHoleTrumpetDepth = 4;
 
-skirtPocketDiameter = 16;
+// Narrow end (at body/spigot join) and wide end (at spigot tip)
+skirtPocketDiameterNarrow = 2.5;
 
-skirtPocketDepth = 20;
+skirtPocketDiameterWide = 7;
+
+skirtPocketDepth = spigotLength;
 
 
 //==============================
@@ -356,10 +359,12 @@ module leader_bore_trumpet()
 //-------------------------------------------------------------
 module skirt_pocket()
 {
-    translate([0, 0, headLength + spigotLength - skirtPocketDepth])
+    // Conical taper: 2.5mm at body/spigot join, 7mm at spigot tip
+    translate([0, 0, headLength])
         cylinder(
-            h = skirtPocketDepth + 0.1,
-            d = skirtPocketDiameter
+            h  = skirtPocketDepth + 0.1,
+            d1 = skirtPocketDiameterNarrow,
+            d2 = skirtPocketDiameterWide
         );
 }
 
