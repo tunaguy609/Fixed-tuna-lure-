@@ -70,9 +70,10 @@ eyeLocation = 32;
 
 jetTubeDiameter = 2.5;
 
-jetTubeOffset = 2.5;
+// Entry bore: just past nose taper where body becomes full diameter
+jetTubeEntryZ = 14;
 
-// Z position where tubes exit the body side wall (between the eyes)
+// Exit bore: between the eyes
 jetTubeExitZ = eyeLocation;
 
 
@@ -315,26 +316,16 @@ module skirt_pocket()
 }
 
 //-------------------------------------------------------------
-// Jet tubes
-// L-shaped channel: straight axial bore from nose face runs
-// to jetTubeExitZ, then a perpendicular bore exits through the
-// body side wall at that Z position creating a visible round hole.
+// Jet bore
+// Straight through-bore perpendicular to body axis at zPos.
+// Creates a visible entry hole on one side and exit on the other.
 //-------------------------------------------------------------
-module jet_tube(side = 1)
+module jet_bore(zPos)
 {
-    // Axial bore from nose face to the exit Z position
-    translate([0, side * jetTubeOffset, -0.1])
+    translate([0, -(bodyDiameter / 2 + 1), zPos])
+        rotate([-90, 0, 0])
         cylinder(
-            h = jetTubeExitZ + 0.1,
-            d = jetTubeDiameter
-        );
-
-    // Perpendicular exit bore: from outside the body wall inward
-    // to meet the axial bore, creating a visible side exit hole.
-    translate([0, side * (bodyDiameter / 2 + 1), jetTubeExitZ])
-        rotate([side * 90, 0, 0])
-        cylinder(
-            h = bodyDiameter / 2 - jetTubeOffset + 2,
+            h = bodyDiameter + 2,
             d = jetTubeDiameter
         );
 }
@@ -376,7 +367,7 @@ difference()
     // Jet tubes
     if (showJetTubes)
     {
-        jet_tube(1);
-        jet_tube(-1);
+        jet_bore(jetTubeEntryZ);
+        jet_bore(jetTubeExitZ);
     }
 }
