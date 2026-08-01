@@ -76,6 +76,8 @@ grooveDepth = 1.5;
 
 grooveEdgeRadius = 0.6;
 
+grooveRearEdgeRadius = 1.0;
+
 groove1 = 46;
 
 
@@ -269,8 +271,9 @@ module rear_assembly()
 module groove(zPos)
 {
     // Asymmetric cupped profile: steep forward wall with rolled lip to grab water,
-    // flat bottom, gently ramped rear wall.  grooveEdgeRadius rounds the rim for
-    // a rolled-edge cup look.
+    // flat bottom, aggressively cupped rear wall facing the nose.
+    // grooveEdgeRadius  = forward lip roll.
+    // grooveRearEdgeRadius = rear lip roll (larger = more cup toward nose).
     // In 2D rotate_extrude space: X = radius, Y = axial (0 = nose side).
     translate([0, 0, zPos])
         rotate_extrude(convexity = 10)
@@ -284,13 +287,13 @@ module groove(zPos)
             translate([bodyDiameter / 2 - grooveDepth, grooveWidth * 0.2])
                 circle(r = grooveEdgeRadius * 0.3);
 
-            // Bottom, near rear
-            translate([bodyDiameter / 2 - grooveDepth, grooveWidth * 0.75])
-                circle(r = grooveEdgeRadius * 0.3);
+            // Bottom, near rear — pushed back to steepen the rear wall
+            translate([bodyDiameter / 2 - grooveDepth, grooveWidth * 0.88])
+                circle(r = grooveRearEdgeRadius * 0.3);
 
-            // Rolled rear edge
-            translate([bodyDiameter / 2 - grooveEdgeRadius, grooveWidth - grooveEdgeRadius])
-                circle(r = grooveEdgeRadius);
+            // Aggressively rolled rear lip — larger radius cups the rear wall toward the nose
+            translate([bodyDiameter / 2 - grooveRearEdgeRadius, grooveWidth - grooveRearEdgeRadius])
+                circle(r = grooveRearEdgeRadius);
         }
 }
 
