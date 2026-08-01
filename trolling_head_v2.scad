@@ -95,12 +95,6 @@ eyeDepth = 2.5;
 
 eyeLocation = 32;
 
-// Flat cheek milled into each side around the eye pocket
-eyeFlatDepth = 1.5;
-
-// Axial length (Z) of the flat cheek
-eyeFlatLength = 16;
-
 
 //==============================
 // INTERNAL
@@ -130,8 +124,6 @@ skirtPocketDepth = spigotLength;
 showGrooves = true;
 
 showEyes = true;
-
-showEyeFlats = true;
 
 showCollars = true;
 
@@ -343,23 +335,6 @@ module eye_pocket(side = 1)
 }
 
 //-------------------------------------------------------------
-// Eye flat
-// Slab cut on each side of the body around the eye area.
-// Subtracts a box whose inner face sits at
-//   bodyDiameter/2 - eyeFlatDepth from centre,
-// leaving a true flat plane on each side.
-//-------------------------------------------------------------
-module eye_flat(side = 1)
-{
-    translate([
-        side * (bodyDiameter / 2 - eyeFlatDepth + 50),
-        0,
-        eyeLocation
-    ])
-        cube([100, bodyDiameter + 10, eyeFlatLength], center = true);
-}
-
-//-------------------------------------------------------------
 // Leader bore
 //-------------------------------------------------------------
 module leader_bore()
@@ -452,13 +427,6 @@ difference()
     {
         eye_pocket(1);
         eye_pocket(-1);
-    }
-
-    // Eye flats (cheeks)
-    if (showEyeFlats)
-    {
-        eye_flat(1);
-        eye_flat(-1);
     }
 
     // Internal features
