@@ -61,6 +61,8 @@ grooveWidth = 2.5;
 
 grooveDepth = 1.5;
 
+grooveEdgeRadius = 0.6;
+
 groove1 = 56;
 
 groove2 = 62;
@@ -246,17 +248,30 @@ module rear_assembly()
 //-------------------------------------------------------------
 module groove(zPos)
 {
-    // Asymmetric cupped profile: steep forward wall to grab water,
-    // flat bottom, gently ramped rear wall.
+    // Asymmetric cupped profile: steep forward wall with rolled lip to grab water,
+    // flat bottom, gently ramped rear wall.  grooveEdgeRadius rounds the rim for
+    // a rolled-edge cup look.
     // In 2D rotate_extrude space: X = radius, Y = axial (0 = nose side).
     translate([0, 0, zPos])
         rotate_extrude(convexity = 10)
-        polygon([
-            [bodyDiameter / 2,               0                    ],  // surface, forward edge
-            [bodyDiameter / 2 - grooveDepth, grooveWidth * 0.2   ],  // bottom, near front
-            [bodyDiameter / 2 - grooveDepth, grooveWidth * 0.75  ],  // bottom, near rear
-            [bodyDiameter / 2,               grooveWidth          ]   // surface, rear edge
-        ]);
+        hull()
+        {
+            // Rolled forward lip
+            translate([bodyDiameter / 2 - grooveEdgeRadius, grooveEdgeRadius])
+                circle(r = grooveEdgeRadius);
+
+            // Bottom, near front
+            translate([bodyDiameter / 2 - grooveDepth, grooveWidth * 0.2])
+                circle(r = grooveEdgeRadius * 0.3);
+
+            // Bottom, near rear
+            translate([bodyDiameter / 2 - grooveDepth, grooveWidth * 0.75])
+                circle(r = grooveEdgeRadius * 0.3);
+
+            // Rolled rear edge
+            translate([bodyDiameter / 2 - grooveEdgeRadius, grooveWidth - grooveEdgeRadius])
+                circle(r = grooveEdgeRadius);
+        }
 }
 
 //-------------------------------------------------------------
