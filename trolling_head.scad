@@ -118,31 +118,18 @@ showSkirtPocket = true;
 
 profile = [
 
-    // Rounded nose
+    // Face plate edge
     [noseDiameter / 2, 0.0],
-    [3.70, 2.0],
-    [3.95, 4.0],
-    [4.30, 6.0],
-    [4.75, 8.0],
-    [5.30, 10.0],
 
-    // Gentle forward expansion
-    [5.90, 13.0],
-    [6.60, 16.0],
-    [7.40, 19.0],
-    [8.25, 22.0],
-    [9.05, 25.0],
+    // Short nose taper – cosine-eased expansion to full body width by Z = 12 mm
+    [4.07, 2.0],
+    [5.63, 4.0],
+    [7.75, 6.0],
+    [9.88, 8.0],
+    [11.43, 10.0],
+    [12.00, 12.0],
 
-    // Mid-body
-    [9.85, 28.0],
-    [10.55, 31.0],
-    [11.10, 34.0],
-    [11.45, 37.0],
-    [11.70, 40.0],
-    [11.88, 43.0],
-    [11.97, 46.0],
-
-    // Straight rear section (24 mm OD)
+    // Straight body (24 mm OD)
     [12.00, 53.0],
     [12.00, 65.0]
 ];
