@@ -28,6 +28,9 @@ bodyDiameter = 23;
 
 noseDiameter = 7;
 
+// Nose face down-slant amount in mm at the top edge (0 = flat face).
+noseDownSlant = 0.8;
+
 
 //==============================
 // REAR
@@ -144,7 +147,7 @@ profile = [
 
     // Rounded nose – circular-arc ogive, tangent to body cylinder at Z = 12 mm.
     // Arc center at (r = -0.72, z = 12), radius = 12.72 mm; gives a convex dome.
-    [noseDiameter / 2,  0.0],   // face-plate edge (r = 3.5)
+    [noseDiameter / 2,  noseDownSlant],   // face-plate edge (slanted down at top)
     [7.14,              2.0],
     [8.27,              3.0],
     [9.17,              4.0],
