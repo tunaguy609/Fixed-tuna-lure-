@@ -50,7 +50,7 @@ collarHeight = 1;
 
 collarSpacing = 10;
 
-collarOffset = 6;
+collarOffset = 0;
 
 
 //==============================
